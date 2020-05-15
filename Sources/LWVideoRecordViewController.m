@@ -238,9 +238,9 @@ typedef NS_OPTIONS(NSUInteger, LWRecordSourceType) {
             __weak typeof(self) weakSelf = self;
             [self.recordEngine changeMovToMp4:videoUrl dataBlock:^(UIImage *movieImage) {
                 weakSelf.image = movieImage;
-                weakSelf.locUrl = videoUrl.absoluteString;
+                weakSelf.locUrl = weakSelf.recordEngine.videoPath;
                 [weakSelf.moviePicker dismissViewControllerAnimated:YES completion:^{
-                    [weakSelf playVideo:videoUrl];
+                    [weakSelf playVideo:weakSelf.recordEngine.videoPath];
                 }];
             }];
         }
