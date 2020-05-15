@@ -9,7 +9,7 @@
 
 #import "LWPreVideoRecordView.h"
 #import <AVFoundation/AVFoundation.h>
-#import <Masonry.h>
+#import <Masonry/Masonry.h>
 
 @interface LWPreVideoRecordView()
 @property (nonatomic, strong) CALayer                   *playerLayer;

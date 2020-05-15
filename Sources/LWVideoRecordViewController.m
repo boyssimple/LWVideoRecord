@@ -7,7 +7,7 @@
 //
 
 #import "LWVideoRecordViewController.h"
-#import <Masonry.h>
+#import <Masonry/Masonry.h>
 #import "LWVideoRecordManager.h"
 #import "LWCycleProgressView.h"
 #import "LWPreVideoRecordView.h"

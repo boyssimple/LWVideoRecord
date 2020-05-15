@@ -7,6 +7,7 @@
 //
 
 #import "LWCycleProgressView.h"
+
 @interface LWCycleProgressView ()
 {
     CAShapeLayer *backGroundLayer;      //背景图层
