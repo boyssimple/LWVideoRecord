@@ -78,8 +78,8 @@ typedef NS_OPTIONS(NSUInteger, LWRecordSourceType) {
     [self.view addSubview:self.progressView];
     [self.view addSubview:self.vCycle];
     [self.vCycle addSubview:self.btnRecord];
-    [self.view addSubview:self.vPlayer];
     [self.view addSubview:self.btnLocal];
+    [self.view addSubview:self.vPlayer];
     
     self.state = LWRecordStateTypeUnStart;
     self.sourceType = LWRecordSourceTypeCamera;
