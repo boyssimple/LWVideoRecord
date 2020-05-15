@@ -11,6 +11,7 @@
 #import "LWVideoRecordManager.h"
 #import "LWCycleProgressView.h"
 #import "LWPreVideoRecordView.h"
+#import <MobileCoreServices/MobileCoreServices.h>
 
 typedef NS_OPTIONS(NSUInteger, LWRecordStateType) {
     LWRecordStateTypeUnStart = 1 << 0,
@@ -18,7 +19,7 @@ typedef NS_OPTIONS(NSUInteger, LWRecordStateType) {
     LWRecordStateTypePause = 1 << 2,
 };
 
-@interface LWVideoRecordViewController ()<LWVideoRecordManagerDelegate>
+@interface LWVideoRecordViewController ()<LWVideoRecordManagerDelegate,UINavigationControllerDelegate,UIImagePickerControllerDelegate>
 @property (nonatomic, strong) UIButton                  *btnClose;
 @property (nonatomic, strong) UIButton                  *btnCamera;
 @property (nonatomic, strong) UIView                    *vCycle;
@@ -33,6 +34,8 @@ typedef NS_OPTIONS(NSUInteger, LWRecordStateType) {
 @property (nonatomic, strong) UIButton                  *btnOK;
 @property (nonatomic, strong) LWPreVideoRecordView      *vPlayer;
 @property (nonatomic, strong) UIImage                   *image;
+
+@property (nonatomic, strong) UIImagePickerController   *moviePicker;
 @end
 
 @implementation LWVideoRecordViewController
@@ -182,6 +185,39 @@ typedef NS_OPTIONS(NSUInteger, LWRecordStateType) {
     }
 }
 
+#pragma mark - Apple相册选择代理
+//选择了某个照片的回调函数/代理回调
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
+    if ([[info objectForKey:UIImagePickerControllerMediaType] isEqualToString:(NSString*)kUTTypeMovie]) {
+        //获取视频的名称
+        NSString * videoPath=[NSString stringWithFormat:@"%@",[info objectForKey:UIImagePickerControllerMediaURL]];
+        NSRange range =[videoPath rangeOfString:@"trim."];//匹配得到的下标
+        NSString *content=[videoPath substringFromIndex:range.location+5];
+        //视频的后缀
+        NSRange rangeSuffix=[content rangeOfString:@"."];
+        NSString * suffixName=[content substringFromIndex:rangeSuffix.location+1];
+        //如果视频是mov格式的则转为MP4的
+        if ([suffixName isEqualToString:@"MOV"]) {
+            NSURL *videoUrl = [info objectForKey:UIImagePickerControllerMediaURL];
+            __weak typeof(self) weakSelf = self;
+            [self.recordEngine changeMovToMp4:videoUrl dataBlock:^(UIImage *movieImage) {
+                weakSelf.image = movieImage;
+                [weakSelf.moviePicker dismissViewControllerAnimated:YES completion:^{
+                    [weakSelf playVideo:videoUrl];
+                }];
+            }];
+        }
+    }
+}
+
+- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker{
+    [picker dismissViewControllerAnimated:TRUE completion:^{
+        self.state = LWRecordStateTypeUnStart;
+        [self.recordEngine cancelCapture];
+        [self.recordEngine startUp];
+        [self toggleFinished:TRUE];
+    }];
+}
 
 #pragma mark - set、get方法
 
@@ -301,5 +337,20 @@ typedef NS_OPTIONS(NSUInteger, LWRecordStateType) {
         };
     }
     return _vPlayer;
+}
+
+
+#pragma mark - 本地视频选择
+
+- (UIImagePickerController *)moviePicker {
+    if (_moviePicker == nil) {
+        _moviePicker = [[UIImagePickerController alloc] init];
+        _moviePicker.delegate = self;
+        _moviePicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+        _moviePicker.mediaTypes = @[(NSString *)kUTTypeMovie];
+        _moviePicker.allowsEditing = YES;
+        _moviePicker.videoMaximumDuration = self.maxRecordTime == 0?10.0:self.maxRecordTime;
+    }
+    return _moviePicker;
 }
 @end
