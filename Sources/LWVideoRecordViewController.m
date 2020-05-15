@@ -135,6 +135,9 @@ typedef NS_OPTIONS(NSUInteger, LWRecordStateType) {
         sender.selected = !sender.selected;
         [self.recordEngine changeCameraInputDeviceisFront:sender.selected];
     }else if(sender.tag == 101){
+        [self.recordEngine shutdown];
+        [self presentViewController:self.moviePicker animated:YES completion:nil];
+        return;
         if (self.state == LWRecordStateTypeUnStart) {
             self.state = LWRecordStateTypeStarting;
             [self.recordEngine startCapture];
@@ -160,15 +163,22 @@ typedef NS_OPTIONS(NSUInteger, LWRecordStateType) {
             [self.recordEngine cancelCapture];
             [self.recordEngine startUp];
             [self toggleFinished:TRUE];
-            self.vPlayer.hidden = FALSE;
             NSURL* url = [NSURL fileURLWithPath:self.recordEngine.videoPath];
-            self.vPlayer.playUrl = url;
+            [self playVideo:url];
         }];
     }else if(sender.tag == 104){
         [self dismissViewControllerAnimated:TRUE completion:^{
             
         }];
     }
+}
+
+
+/// 播放录完成播放
+/// @param url 播放地址
+- (void)playVideo:(NSURL*)url{
+    self.vPlayer.hidden = FALSE;
+    self.vPlayer.playUrl = url;
 }
 
 - (void)toggleFinished:(BOOL)show{
@@ -280,7 +290,7 @@ typedef NS_OPTIONS(NSUInteger, LWRecordStateType) {
     if (_recordEngine == nil) {
         _recordEngine = [[LWVideoRecordManager alloc] init];
         _recordEngine.delegate = self;
-        _recordEngine.maxRecordTime = self.maxRecordTime==0?10.:self.maxRecordTime;
+        _recordEngine.maxRecordTime = self.maxRecordTime == 0?10.0:self.maxRecordTime;
     }
     return _recordEngine;
 }
@@ -339,7 +349,6 @@ typedef NS_OPTIONS(NSUInteger, LWRecordStateType) {
     return _vPlayer;
 }
 
-
 #pragma mark - 本地视频选择
 
 - (UIImagePickerController *)moviePicker {
@@ -349,7 +358,7 @@ typedef NS_OPTIONS(NSUInteger, LWRecordStateType) {
         _moviePicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
         _moviePicker.mediaTypes = @[(NSString *)kUTTypeMovie];
         _moviePicker.allowsEditing = YES;
-        _moviePicker.videoMaximumDuration = self.maxRecordTime == 0?10.0:self.maxRecordTime;
+        _moviePicker.videoMaximumDuration = 10;//self.maxRecordTime == 0?10.0:self.maxRecordTime;
     }
     return _moviePicker;
 }
