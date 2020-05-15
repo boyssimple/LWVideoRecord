@@ -26,6 +26,7 @@ typedef NS_OPTIONS(NSUInteger, LWRecordStateType) {
 @property (strong, nonatomic) LWVideoRecordManager      *recordEngine;
 @property (nonatomic, strong) LWCycleProgressView       *progressView;
 @property (nonatomic, assign) LWRecordStateType          state;
+@property (nonatomic, strong) UILabel                   *lbTips;
 
 //录制完成按钮
 @property (nonatomic, strong) UIButton                  *btnCancel;
@@ -43,12 +44,14 @@ typedef NS_OPTIONS(NSUInteger, LWRecordStateType) {
         [self.recordEngine previewLayer].frame = self.view.bounds;
         [self.view.layer insertSublayer:[self.recordEngine previewLayer] atIndex:0];
     }
+    self.lbTips.hidden = TRUE;
     [self.recordEngine startUp];
 }
 
 
 - (void)viewDidDisappear:(BOOL)animated {
     [super viewDidDisappear:animated];
+    self.lbTips.hidden = FALSE;
     [self.recordEngine shutdown];
 }
 
@@ -57,6 +60,7 @@ typedef NS_OPTIONS(NSUInteger, LWRecordStateType) {
     
     self.view.backgroundColor = [UIColor blackColor];
     
+    [self.view addSubview:self.lbTips];
     [self.view addSubview:self.btnClose];
     [self.view addSubview:self.btnCamera];
     [self.view addSubview:self.btnCancel];
@@ -67,6 +71,10 @@ typedef NS_OPTIONS(NSUInteger, LWRecordStateType) {
     [self.view addSubview:self.vPlayer];
     
     self.state = LWRecordStateTypeUnStart;
+    
+    [self.lbTips mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.center.equalTo(self.view);
+    }];
     
     [self.btnClose mas_makeConstraints:^(MASConstraintMaker *make) {
         make.width.mas_equalTo(30);
@@ -105,6 +113,7 @@ typedef NS_OPTIONS(NSUInteger, LWRecordStateType) {
         make.centerY.equalTo(self.vCycle);
         make.right.equalTo(self.progressView.mas_left).offset(-50);
     }];
+    
     
     [self.btnOK mas_makeConstraints:^(MASConstraintMaker *make) {
         make.width.height.mas_equalTo(60);
@@ -175,6 +184,16 @@ typedef NS_OPTIONS(NSUInteger, LWRecordStateType) {
 
 
 #pragma mark - set、get方法
+
+- (UILabel*)lbTips{
+    if(!_lbTips){
+        _lbTips = [[UILabel alloc]init];
+        _lbTips.text = @"相机启动中...";
+        _lbTips.textColor = [UIColor whiteColor];
+        _lbTips.font = [UIFont systemFontOfSize:14];
+    }
+    return _lbTips;
+}
 
 - (UIButton*)btnClose{
     if(!_btnClose){

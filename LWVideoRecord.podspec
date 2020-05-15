@@ -16,7 +16,7 @@ Pod::Spec.new do |spec|
   #
 
   spec.name         = "LWVideoRecord"
-  spec.version      = "0.0.13"
+  spec.version      = "0.0.14"
   spec.summary      = "视频录制"
 
   # This description is used to generate tags and improve search results.
