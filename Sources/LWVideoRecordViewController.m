@@ -240,7 +240,7 @@ typedef NS_OPTIONS(NSUInteger, LWRecordSourceType) {
                 weakSelf.image = movieImage;
                 weakSelf.locUrl = weakSelf.recordEngine.videoPath;
                 [weakSelf.moviePicker dismissViewControllerAnimated:YES completion:^{
-                    [weakSelf playVideo:weakSelf.recordEngine.videoPath];
+                    [weakSelf playVideo:[NSURL fileURLWithPath:weakSelf.recordEngine.videoPath]];
                 }];
             }];
         }
