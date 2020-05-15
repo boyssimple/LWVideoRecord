@@ -19,10 +19,11 @@ typedef NS_OPTIONS(NSUInteger, LWRecordStateType) {
 };
 
 @interface LWVideoRecordViewController ()<LWVideoRecordManagerDelegate>
+@property (nonatomic, strong) UIButton                  *btnClose;
 @property (nonatomic, strong) UIButton                  *btnCamera;
 @property (nonatomic, strong) UIView                    *vCycle;
 @property (nonatomic, strong) UIButton                  *btnRecord;
-@property (strong, nonatomic) LWVideoRecordManager           *recordEngine;
+@property (strong, nonatomic) LWVideoRecordManager      *recordEngine;
 @property (nonatomic, strong) LWCycleProgressView       *progressView;
 @property (nonatomic, assign) LWRecordStateType          state;
 
@@ -56,6 +57,7 @@ typedef NS_OPTIONS(NSUInteger, LWRecordStateType) {
     
     self.view.backgroundColor = [UIColor blackColor];
     
+    [self.view addSubview:self.btnClose];
     [self.view addSubview:self.btnCamera];
     [self.view addSubview:self.btnCancel];
     [self.view addSubview:self.btnOK];
@@ -65,6 +67,13 @@ typedef NS_OPTIONS(NSUInteger, LWRecordStateType) {
     [self.view addSubview:self.vPlayer];
     
     self.state = LWRecordStateTypeUnStart;
+    
+    [self.btnClose mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.width.mas_equalTo(30);
+        make.height.mas_equalTo(23);
+        make.top.mas_equalTo(50);
+        make.left.mas_equalTo(20);
+    }];
     
     [self.btnCamera mas_makeConstraints:^(MASConstraintMaker *make) {
         make.width.mas_equalTo(30);
@@ -96,7 +105,6 @@ typedef NS_OPTIONS(NSUInteger, LWRecordStateType) {
         make.centerY.equalTo(self.vCycle);
         make.right.equalTo(self.progressView.mas_left).offset(-50);
     }];
-    
     
     [self.btnOK mas_makeConstraints:^(MASConstraintMaker *make) {
         make.width.height.mas_equalTo(60);
@@ -144,6 +152,10 @@ typedef NS_OPTIONS(NSUInteger, LWRecordStateType) {
             NSURL* url = [NSURL fileURLWithPath:self.recordEngine.videoPath];
             self.vPlayer.playUrl = url;
         }];
+    }else if(sender.tag == 104){
+        [self dismissViewControllerAnimated:TRUE completion:^{
+            
+        }];
     }
 }
 
@@ -164,12 +176,25 @@ typedef NS_OPTIONS(NSUInteger, LWRecordStateType) {
 
 #pragma mark - set、get方法
 
+- (UIButton*)btnClose{
+    if(!_btnClose){
+        _btnClose = [[UIButton alloc]initWithFrame:CGRectZero];
+        [_btnClose setImage:[UIImage imageNamed:@"record_video_close"] forState:UIControlStateNormal];
+        [_btnClose setImage:[UIImage imageNamed:@"record_video_close"] forState:UIControlStateHighlighted];
+        [_btnClose setImage:[UIImage imageNamed:@"record_video_close"] forState:UIControlStateSelected];
+        [_btnClose addTarget:self action:@selector(clickAction:) forControlEvents:UIControlEventTouchUpInside];
+        _btnClose.tag = 104;
+        
+    }
+    return _btnClose;
+}
+
 - (UIButton*)btnCamera{
     if(!_btnCamera){
         _btnCamera = [[UIButton alloc]initWithFrame:CGRectZero];
-        [_btnCamera setImage:[UIImage imageNamed:@"LWVideoRecord.bundle/record_video_camera"] forState:UIControlStateNormal];
-        [_btnCamera setImage:[UIImage imageNamed:@"LWVideoRecord.bundle/record_video_camera"] forState:UIControlStateHighlighted];
-        [_btnCamera setImage:[UIImage imageNamed:@"LWVideoRecord.bundle/record_video_camera"] forState:UIControlStateSelected];
+        [_btnCamera setImage:[UIImage imageNamed:@"record_video_camera"] forState:UIControlStateNormal];
+        [_btnCamera setImage:[UIImage imageNamed:@"record_video_camera"] forState:UIControlStateHighlighted];
+        [_btnCamera setImage:[UIImage imageNamed:@"record_video_camera"] forState:UIControlStateSelected];
         [_btnCamera addTarget:self action:@selector(clickAction:) forControlEvents:UIControlEventTouchUpInside];
         _btnCamera.tag = 100;
         
@@ -217,9 +242,9 @@ typedef NS_OPTIONS(NSUInteger, LWRecordStateType) {
 - (UIButton*)btnCancel{
     if(!_btnCancel){
         _btnCancel = [[UIButton alloc]initWithFrame:CGRectZero];
-        [_btnCancel setImage:[UIImage imageNamed:@"LWVideoRecord.bundle/record_video_cancel"] forState:UIControlStateNormal];
-        [_btnCancel setImage:[UIImage imageNamed:@"LWVideoRecord.bundle/record_video_cancel"] forState:UIControlStateHighlighted];
-        [_btnCancel setImage:[UIImage imageNamed:@"LWVideoRecord.bundle/record_video_cancel"] forState:UIControlStateSelected];
+        [_btnCancel setImage:[UIImage imageNamed:@"record_video_cancel"] forState:UIControlStateNormal];
+        [_btnCancel setImage:[UIImage imageNamed:@"record_video_cancel"] forState:UIControlStateHighlighted];
+        [_btnCancel setImage:[UIImage imageNamed:@"record_video_cancel"] forState:UIControlStateSelected];
         [_btnCancel addTarget:self action:@selector(clickAction:) forControlEvents:UIControlEventTouchUpInside];
         _btnCancel.tag = 102;
         _btnCancel.hidden = TRUE;
@@ -231,9 +256,9 @@ typedef NS_OPTIONS(NSUInteger, LWRecordStateType) {
 - (UIButton*)btnOK{
     if(!_btnOK){
         _btnOK = [[UIButton alloc]initWithFrame:CGRectZero];
-        [_btnOK setImage:[UIImage imageNamed:@"LWVideoRecord.bundle/record_video_confirm"] forState:UIControlStateNormal];
-        [_btnOK setImage:[UIImage imageNamed:@"LWVideoRecord.bundle/record_video_confirm"] forState:UIControlStateHighlighted];
-        [_btnOK setImage:[UIImage imageNamed:@"LWVideoRecord.bundle/record_video_confirm"] forState:UIControlStateSelected];
+        [_btnOK setImage:[UIImage imageNamed:@"record_video_confirm"] forState:UIControlStateNormal];
+        [_btnOK setImage:[UIImage imageNamed:@"record_video_confirm"] forState:UIControlStateHighlighted];
+        [_btnOK setImage:[UIImage imageNamed:@"record_video_confirm"] forState:UIControlStateSelected];
         [_btnOK addTarget:self action:@selector(clickAction:) forControlEvents:UIControlEventTouchUpInside];
         _btnOK.tag = 103;
         _btnOK.hidden = TRUE;
