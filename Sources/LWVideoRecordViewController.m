@@ -244,7 +244,7 @@ typedef NS_OPTIONS(NSUInteger, LWRecordStateType) {
     if (_recordEngine == nil) {
         _recordEngine = [[LWVideoRecordManager alloc] init];
         _recordEngine.delegate = self;
-        _recordEngine.maxRecordTime = 5;
+        _recordEngine.maxRecordTime = self.maxRecordTime==0?10.:self.maxRecordTime;
     }
     return _recordEngine;
 }

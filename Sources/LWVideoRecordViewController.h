@@ -11,7 +11,8 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface LWVideoRecordViewController : UIViewController
-@property (nonatomic, strong) void (^recordFinished)(NSString *url,UIImage *image);
+@property (atomic, assign) CGFloat maxRecordTime;                                   //录制最长时间
+@property (nonatomic, strong) void (^recordFinished)(NSString *url,UIImage *image); //完成回调
 @end
 
 NS_ASSUME_NONNULL_END
