@@ -14,9 +14,14 @@
 #import <MobileCoreServices/MobileCoreServices.h>
 
 typedef NS_OPTIONS(NSUInteger, LWRecordStateType) {
-    LWRecordStateTypeUnStart = 1 << 0,
-    LWRecordStateTypeStarting = 1 << 1,
-    LWRecordStateTypePause = 1 << 2,
+    LWRecordStateTypeUnStart = 1 << 0,      //未开始
+    LWRecordStateTypeStarting = 1 << 1,     //已开始
+    LWRecordStateTypePause = 1 << 2,        //暂停
+};
+
+typedef NS_OPTIONS(NSUInteger, LWRecordSourceType) {
+    LWRecordSourceTypeCamera = 1 << 0,            //拍摄
+    LWRecordSourceTypePhoto = 1 << 1,            //相册
 };
 
 @interface LWVideoRecordViewController ()<LWVideoRecordManagerDelegate,UINavigationControllerDelegate,UIImagePickerControllerDelegate>
@@ -34,8 +39,10 @@ typedef NS_OPTIONS(NSUInteger, LWRecordStateType) {
 @property (nonatomic, strong) UIButton                  *btnOK;
 @property (nonatomic, strong) LWPreVideoRecordView      *vPlayer;
 @property (nonatomic, strong) UIImage                   *image;
-
+@property (nonatomic, strong) UIButton                  *btnLocal;
 @property (nonatomic, strong) UIImagePickerController   *moviePicker;
+@property (nonatomic, assign) LWRecordSourceType         sourceType;
+@property (nonatomic, strong) NSString                  *locUrl;
 @end
 
 @implementation LWVideoRecordViewController
@@ -72,8 +79,10 @@ typedef NS_OPTIONS(NSUInteger, LWRecordStateType) {
     [self.view addSubview:self.vCycle];
     [self.vCycle addSubview:self.btnRecord];
     [self.view addSubview:self.vPlayer];
+    [self.view addSubview:self.btnLocal];
     
     self.state = LWRecordStateTypeUnStart;
+    self.sourceType = LWRecordSourceTypeCamera;
     
     [self.lbTips mas_makeConstraints:^(MASConstraintMaker *make) {
         make.center.equalTo(self.view);
@@ -128,16 +137,22 @@ typedef NS_OPTIONS(NSUInteger, LWRecordStateType) {
         make.left.top.right.bottom.mas_equalTo(0);
         make.height.mas_offset([UIScreen mainScreen].bounds.size.height);
     }];
+    
+    [self.btnLocal mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerX.equalTo(self.view);
+        make.top.equalTo(self.vCycle.mas_bottom).offset(15);
+    }];
 }
 
 - (void)clickAction:(UIButton*)sender{
+    //切换前后相机
     if (sender.tag == 100) {
         sender.selected = !sender.selected;
         [self.recordEngine changeCameraInputDeviceisFront:sender.selected];
-    }else if(sender.tag == 101){
-        [self.recordEngine shutdown];
-        [self presentViewController:self.moviePicker animated:YES completion:nil];
-        return;
+    }
+    //拍摄
+    else if(sender.tag == 101){
+        self.sourceType = LWRecordSourceTypeCamera;
         if (self.state == LWRecordStateTypeUnStart) {
             self.state = LWRecordStateTypeStarting;
             [self.recordEngine startCapture];
@@ -151,12 +166,16 @@ typedef NS_OPTIONS(NSUInteger, LWRecordStateType) {
             [self.recordEngine resumeCapture];
             [self toggleFinished:TRUE];
         }
-    }else if(sender.tag == 102){
+    }
+    //取消重拍
+    else if(sender.tag == 102){
         self.state = LWRecordStateTypeUnStart;
         [self.recordEngine cancelCapture];
         [self.recordEngine startUp];
         [self toggleFinished:TRUE];
-    }else if(sender.tag == 103){
+    }
+    //拍摄完成
+    else if(sender.tag == 103){
         self.state = LWRecordStateTypeUnStart;
         [self.recordEngine stopCaptureHandler:^(UIImage *movieImage) {
             self.image = movieImage;
@@ -166,10 +185,18 @@ typedef NS_OPTIONS(NSUInteger, LWRecordStateType) {
             NSURL* url = [NSURL fileURLWithPath:self.recordEngine.videoPath];
             [self playVideo:url];
         }];
-    }else if(sender.tag == 104){
+    }
+    //关闭
+    else if(sender.tag == 104){
         [self dismissViewControllerAnimated:TRUE completion:^{
             
         }];
+    }
+    //本地视频
+    else if(sender.tag == 105){
+        self.sourceType = LWRecordSourceTypePhoto;
+        [self.recordEngine shutdown];
+        [self presentViewController:self.moviePicker animated:YES completion:nil];
     }
 }
 
@@ -186,16 +213,15 @@ typedef NS_OPTIONS(NSUInteger, LWRecordStateType) {
     self.btnOK.hidden = show;
 }
 
-#pragma mark WCLRecordEngineDelegate
+#pragma mark LWVideoRecordManagerDelegate
 - (void)recordProgress:(CGFloat)progress{
-    NSLog(@"%f",progress);
     self.progressView.progressValue = progress;
     if (progress >= 1) {
         [self toggleFinished:FALSE];
     }
 }
 
-#pragma mark - Apple相册选择代理
+#pragma mark - UIImagePickerControllerDelegate
 //选择了某个照片的回调函数/代理回调
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
     if ([[info objectForKey:UIImagePickerControllerMediaType] isEqualToString:(NSString*)kUTTypeMovie]) {
@@ -212,6 +238,7 @@ typedef NS_OPTIONS(NSUInteger, LWRecordStateType) {
             __weak typeof(self) weakSelf = self;
             [self.recordEngine changeMovToMp4:videoUrl dataBlock:^(UIImage *movieImage) {
                 weakSelf.image = movieImage;
+                weakSelf.locUrl = videoUrl.absoluteString;
                 [weakSelf.moviePicker dismissViewControllerAnimated:YES completion:^{
                     [weakSelf playVideo:videoUrl];
                 }];
@@ -221,11 +248,14 @@ typedef NS_OPTIONS(NSUInteger, LWRecordStateType) {
 }
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker{
+    self.state = LWRecordStateTypeUnStart;
+    [self.recordEngine cancelCapture];
+    [self.recordEngine startUp];
+    [self toggleFinished:TRUE];
+    self.sourceType = LWRecordSourceTypeCamera;
+    
     [picker dismissViewControllerAnimated:TRUE completion:^{
-        self.state = LWRecordStateTypeUnStart;
-        [self.recordEngine cancelCapture];
-        [self.recordEngine startUp];
-        [self toggleFinished:TRUE];
+        
     }];
 }
 
@@ -331,7 +361,6 @@ typedef NS_OPTIONS(NSUInteger, LWRecordStateType) {
     return _btnOK;
 }
 
-
 - (LWPreVideoRecordView*)vPlayer{
     if(!_vPlayer){
         _vPlayer = [[LWPreVideoRecordView alloc]init];
@@ -339,7 +368,11 @@ typedef NS_OPTIONS(NSUInteger, LWRecordStateType) {
         __weak typeof(self) weakSelf = self;
         _vPlayer.clickAction = ^{
             if (weakSelf.recordFinished) {
-                weakSelf.recordFinished(weakSelf.recordEngine.videoPath,weakSelf.image);
+                if (weakSelf.sourceType == LWRecordSourceTypeCamera) {
+                    weakSelf.recordFinished(weakSelf.recordEngine.videoPath,weakSelf.image);
+                }else{
+                    weakSelf.recordFinished(weakSelf.locUrl,weakSelf.image);
+                }
             }
             [weakSelf dismissViewControllerAnimated:TRUE completion:^{
                 
@@ -358,8 +391,22 @@ typedef NS_OPTIONS(NSUInteger, LWRecordStateType) {
         _moviePicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
         _moviePicker.mediaTypes = @[(NSString *)kUTTypeMovie];
         _moviePicker.allowsEditing = YES;
-        _moviePicker.videoMaximumDuration = 10;//self.maxRecordTime == 0?10.0:self.maxRecordTime;
+        _moviePicker.videoMaximumDuration = self.maxRecordTime == 0?10.0:self.maxRecordTime;
     }
     return _moviePicker;
 }
+
+- (UIButton*)btnLocal{
+    if(!_btnLocal){
+        _btnLocal = [[UIButton alloc]initWithFrame:CGRectZero];
+        [_btnLocal setTitle:@"本地视频" forState:UIControlStateNormal];
+        [_btnLocal setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [_btnLocal addTarget:self action:@selector(clickAction:) forControlEvents:UIControlEventTouchUpInside];
+        _btnLocal.titleLabel.font = [UIFont systemFontOfSize:14];
+        _btnLocal.tag = 105;
+    }
+    return _btnLocal;
+}
+
+
 @end
