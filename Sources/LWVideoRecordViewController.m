@@ -198,9 +198,9 @@ typedef NS_OPTIONS(NSUInteger, LWRecordStateType) {
 - (UIButton*)btnClose{
     if(!_btnClose){
         _btnClose = [[UIButton alloc]initWithFrame:CGRectZero];
-        [_btnClose setImage:[UIImage imageNamed:@"record_video_close"] forState:UIControlStateNormal];
-        [_btnClose setImage:[UIImage imageNamed:@"record_video_close"] forState:UIControlStateHighlighted];
-        [_btnClose setImage:[UIImage imageNamed:@"record_video_close"] forState:UIControlStateSelected];
+        [_btnClose setImage:[UIImage imageNamed:@"LWVideoRecord.bundle/record_video_close"] forState:UIControlStateNormal];
+        [_btnClose setImage:[UIImage imageNamed:@"LWVideoRecord.bundle/record_video_close"] forState:UIControlStateHighlighted];
+        [_btnClose setImage:[UIImage imageNamed:@"LWVideoRecord.bundle/record_video_close"] forState:UIControlStateSelected];
         [_btnClose addTarget:self action:@selector(clickAction:) forControlEvents:UIControlEventTouchUpInside];
         _btnClose.tag = 104;
         
@@ -211,9 +211,9 @@ typedef NS_OPTIONS(NSUInteger, LWRecordStateType) {
 - (UIButton*)btnCamera{
     if(!_btnCamera){
         _btnCamera = [[UIButton alloc]initWithFrame:CGRectZero];
-        [_btnCamera setImage:[UIImage imageNamed:@"record_video_camera"] forState:UIControlStateNormal];
-        [_btnCamera setImage:[UIImage imageNamed:@"record_video_camera"] forState:UIControlStateHighlighted];
-        [_btnCamera setImage:[UIImage imageNamed:@"record_video_camera"] forState:UIControlStateSelected];
+        [_btnCamera setImage:[UIImage imageNamed:@"LWVideoRecord.bundle/record_video_camera"] forState:UIControlStateNormal];
+        [_btnCamera setImage:[UIImage imageNamed:@"LWVideoRecord.bundle/record_video_camera"] forState:UIControlStateHighlighted];
+        [_btnCamera setImage:[UIImage imageNamed:@"LWVideoRecord.bundle/record_video_camera"] forState:UIControlStateSelected];
         [_btnCamera addTarget:self action:@selector(clickAction:) forControlEvents:UIControlEventTouchUpInside];
         _btnCamera.tag = 100;
         
@@ -261,9 +261,9 @@ typedef NS_OPTIONS(NSUInteger, LWRecordStateType) {
 - (UIButton*)btnCancel{
     if(!_btnCancel){
         _btnCancel = [[UIButton alloc]initWithFrame:CGRectZero];
-        [_btnCancel setImage:[UIImage imageNamed:@"record_video_cancel"] forState:UIControlStateNormal];
-        [_btnCancel setImage:[UIImage imageNamed:@"record_video_cancel"] forState:UIControlStateHighlighted];
-        [_btnCancel setImage:[UIImage imageNamed:@"record_video_cancel"] forState:UIControlStateSelected];
+        [_btnCancel setImage:[UIImage imageNamed:@"LWVideoRecord.bundle/record_video_cancel"] forState:UIControlStateNormal];
+        [_btnCancel setImage:[UIImage imageNamed:@"LWVideoRecord.bundle/record_video_cancel"] forState:UIControlStateHighlighted];
+        [_btnCancel setImage:[UIImage imageNamed:@"LWVideoRecord.bundle/record_video_cancel"] forState:UIControlStateSelected];
         [_btnCancel addTarget:self action:@selector(clickAction:) forControlEvents:UIControlEventTouchUpInside];
         _btnCancel.tag = 102;
         _btnCancel.hidden = TRUE;
@@ -275,9 +275,9 @@ typedef NS_OPTIONS(NSUInteger, LWRecordStateType) {
 - (UIButton*)btnOK{
     if(!_btnOK){
         _btnOK = [[UIButton alloc]initWithFrame:CGRectZero];
-        [_btnOK setImage:[UIImage imageNamed:@"record_video_confirm"] forState:UIControlStateNormal];
-        [_btnOK setImage:[UIImage imageNamed:@"record_video_confirm"] forState:UIControlStateHighlighted];
-        [_btnOK setImage:[UIImage imageNamed:@"record_video_confirm"] forState:UIControlStateSelected];
+        [_btnOK setImage:[UIImage imageNamed:@"LWVideoRecord.bundle/record_video_confirm"] forState:UIControlStateNormal];
+        [_btnOK setImage:[UIImage imageNamed:@"LWVideoRecord.bundle/record_video_confirm"] forState:UIControlStateHighlighted];
+        [_btnOK setImage:[UIImage imageNamed:@"LWVideoRecord.bundle/record_video_confirm"] forState:UIControlStateSelected];
         [_btnOK addTarget:self action:@selector(clickAction:) forControlEvents:UIControlEventTouchUpInside];
         _btnOK.tag = 103;
         _btnOK.hidden = TRUE;
