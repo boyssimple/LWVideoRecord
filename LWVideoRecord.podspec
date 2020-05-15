@@ -16,7 +16,7 @@ Pod::Spec.new do |spec|
   #
 
   spec.name         = "LWVideoRecord"
-  spec.version      = "0.0.11"
+  spec.version      = "0.0.12"
   spec.summary      = "视频录制"
 
   # This description is used to generate tags and improve search results.
@@ -25,7 +25,7 @@ Pod::Spec.new do |spec|
   #   * Write the description between the DESC delimiters below.
   #   * Finally, don't worry about the indent, CocoaPods strips it!
   spec.description  = <<-DESC
-                      视频录制
+                      视频录制 LWVideoRecord
                    DESC
 
   spec.homepage     = "https://github.com/boyssimple/LWVideoRecord.git"
@@ -92,6 +92,8 @@ Pod::Spec.new do |spec|
   #
 
   spec.source_files  = "Sources/**/*.{h,m}"
+
+  spec.resources    = "Assets/*.bundle"
 
   # spec.public_header_files = "Classes/**/*.h"
 

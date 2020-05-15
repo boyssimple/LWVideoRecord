@@ -104,9 +104,9 @@
 - (UIButton*)btnCancel{
     if(!_btnCancel){
         _btnCancel = [[UIButton alloc]initWithFrame:CGRectZero];
-        [_btnCancel setImage:[UIImage imageNamed:@"record_video_cancel"] forState:UIControlStateNormal];
-        [_btnCancel setImage:[UIImage imageNamed:@"record_video_cancel"] forState:UIControlStateHighlighted];
-        [_btnCancel setImage:[UIImage imageNamed:@"record_video_cancel"] forState:UIControlStateSelected];
+        [_btnCancel setImage:[UIImage imageNamed:@"LWVideoRecord.bundle/record_video_cancel"] forState:UIControlStateNormal];
+        [_btnCancel setImage:[UIImage imageNamed:@"LWVideoRecord.bundle/record_video_cancel"] forState:UIControlStateHighlighted];
+        [_btnCancel setImage:[UIImage imageNamed:@"LWVideoRecord.bundle/record_video_cancel"] forState:UIControlStateSelected];
         [_btnCancel addTarget:self action:@selector(clickAction:) forControlEvents:UIControlEventTouchUpInside];
         _btnCancel.tag = 100;
         
@@ -117,9 +117,9 @@
 - (UIButton*)btnOK{
     if(!_btnOK){
         _btnOK = [[UIButton alloc]initWithFrame:CGRectZero];
-        [_btnOK setImage:[UIImage imageNamed:@"record_video_confirm"] forState:UIControlStateNormal];
-        [_btnOK setImage:[UIImage imageNamed:@"record_video_confirm"] forState:UIControlStateHighlighted];
-        [_btnOK setImage:[UIImage imageNamed:@"record_video_confirm"] forState:UIControlStateSelected];
+        [_btnOK setImage:[UIImage imageNamed:@"LWVideoRecord.bundle/record_video_confirm"] forState:UIControlStateNormal];
+        [_btnOK setImage:[UIImage imageNamed:@"LWVideoRecord.bundle/record_video_confirm"] forState:UIControlStateHighlighted];
+        [_btnOK setImage:[UIImage imageNamed:@"LWVideoRecord.bundle/record_video_confirm"] forState:UIControlStateSelected];
         [_btnOK addTarget:self action:@selector(clickAction:) forControlEvents:UIControlEventTouchUpInside];
         _btnOK.tag = 101;
     }
